@@ -88,10 +88,10 @@ Muzi가 나간후 다시 들어올 때, Prodo 라는 닉네임으로 들어올 �
 
 ---
 
-- 첫번째 버전 해결포인트
-  - 아이디와 닉네임을 key-value로 가지는 자료구조 사용. 아이디와 대응되는 닉네임 정보를 보관한다. 채팅방 방문 기록을 아이디로 기록하고 있다가, 나중에 아이디에 대응되는 닉네임 값을 변경해서 출력 (HashMap 사용)
-    - 이렇게 하는 이유는, 유저가 사용하는 닉네임이 바뀌면 유저의 모든 기록에서 닉네임을 변경해야 해서, 유저의 최신 닉네임 값을 유지하고 있다가 나중에 모두 변경해주면 되기 때문.
-  - 채팅방 기록은 유저가 들어온 기록, 나간 기록을 모두 기록해야 한다, 따라서 유저아이디와 유저액션(Enter or Leave)에 대한 정보를 함께 기록했다. (ArrayList 사용)
+- 해결 포인트
+  - 아이디와 닉네임을 key-value로 가지는 자료구조 사용. 아이디와 대응되는 닉네임 정보를 보관한다. Enter 또는 Change일 경우에만 아이디에 대응하는 닉네임 정보를 업데이트해주기 (HashMap 사용)
+  - 다시 reocord를 돌면서, Enter 또는 Leaver일 경우에만 로그를 저장한다. (ArrayList<String> 사용)
+  - ArrayList에 담긴 내용을 배열에 담아서 return 
 
 ```java
 import java.util.*;
@@ -100,50 +100,32 @@ class Solution {
     public String[] solution(String[] record) {
         
         HashMap<String,String> map = new HashMap<>();
-        ArrayList<User> list = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
         
         for(int i=0; i<record.length; i++){
-            //parsing
             String[] info =  record[i].split(" ");
-            String action = info[0];
-            String userId = info[1];
             
-            if(action.equals("Enter")){
-                map.put(userId,info[2]);
-                list.add(new User(userId,action));
-            }else if(action.equals("Change")){
-                map.put(userId,info[2]);
-            }else{  //leave
-                list.add(new User(userId,action));
-            }
+            if(info[0].equals("Enter") || info[0].equals("Change")){
+                map.put(info[1],info[2]);
+            }   
+        }
+        
+         for(int i=0; i<record.length; i++){
+            String[] info =  record[i].split(" ");
             
-        }//for
+            if(info[0].equals("Enter")){
+              	list.add(map.get(info[1])+"님이 들어왔습니다.");
+            }else if(info[0].equals("Leave")){
+              	list.add(map.get(info[1])+"님이 나갔습니다.");
+            }   
+        }
         
         String[] result = new String[list.size()];
         for(int i=0; i<list.size(); i++){
-            User user = list.get(i);
-            StringBuilder sb = new StringBuilder(map.get(user.userId));
-            if(user.action.equals("Enter")){
-                sb.append("님이 들어왔습니다.");
-            }else{
-                sb.append("님이 나갔습니다.");
-            }
-            
-            result[i] = sb.toString();
+            result[i] = list.get(i);
         }//for
         
-        
         return result;
-    }
-}
-
-
-class User{
-    String userId;
-    String action;
-    User(String userId, String action){
-        this.userId = userId;
-        this.action = action;
     }
 }
 ```
