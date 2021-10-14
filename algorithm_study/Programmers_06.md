@@ -1,11 +1,4 @@
----
-layout: post
-title: (2020 KAKAO BLIND RECRUITMENT) 가사 검색 (version_1)
-tags:
-  - 알고리즘(Programmers)
----
 
-<br>
 
 ### [문제](https://programmers.co.kr/learn/courses/30/lessons/60060) - (2020 KAKAO BLIND RECRUITMENT) 가사 검색 v1
 
