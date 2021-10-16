@@ -1,2 +1,2 @@
-f2.txt version1
+f2.txt version2
 
