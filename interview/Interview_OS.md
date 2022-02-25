@@ -50,7 +50,7 @@
 
 <br>
 
-### 물리적 메모리 할당
+### 물리적 메모리 관리
 
 ---
 
@@ -114,14 +114,54 @@
 
 <br>
 
-- Segmentaion 
+- **Segmentaion**
   
   - 프로세스를 구성하는 주소공간을 의미 단위로 쪼갬
   
   - logical address => (segment-number, offset)
   
-  - 페이징 기법과 다르게 세그먼트는 물리적 메모리에서 세그먼트 크기가 다 다름... 따라서 Segment Table의 엔트리는 물리적 메모리의 시작 위치 (base) 와 세그먼트의 길이 (limit)
+  - 페이징 기법과 다르게 세그먼트는 물리적 메모리에서 세그먼트 크기가 다 다름. 따라서 Segment Table의 엔트리는 물리적 메모리의 시작 위치 (base) 와 세그먼트의 길이 (limit) 를 가진다. 
   
   - 의미단위로 쪼개기 때문에, 공유(sharing)와 보안(protection)에 있어 페이징보다 효과적이다. 
+
+<br>
+
+- 물리적인 메모리 주소변환은 운영체제가 관여하지 않는다
+
+<br>
+
+### Virtual Memory (가상메모리)
+
+---
+
+- **Demand Paging (요구페이징)**
+  
+  - 요청이 있을 때 페이지를 메모리에 올림
+  
+  - page table에 valid/invalid bit 을 저장 (v: 메로리에 올라와있는 페이지 / i: 메모리에 올라오지 않은 페이지, 사용하지 않는 주소 영역의 페이지 )
+  
+  - invalid 페이지에 대해 요청이 들어옴 (page fault) => page fault trap => CPU가 운영체제에게 넘어간다 => page fault handler. 운영체제에서 필요한 페이지를 메모리로 올려준다. 
+
+<br>
+
+- Page replacement 와 replacement algorithm
+  
+  - 메인메모리 프레임이 모두 꽉 차있을 때, 어떤 페이지를 쫓아낼지 (victim) 결정
+  
+  - 곧바로 사용되지 않을 페이지를 쫓아내는 것이 좋음
+  
+  - replacement algorithm => page fault rate 을 최소화하게 페이지 교체하는 것이 목표
+    
+    - Optimal : 가장 먼 미래에 참조되는 페이지를 replace
+    
+    - FIFO : 가장 먼저 들어온 페이지를 replace
+    
+    - LRU (Least Recently Used): 가장 오래전에 참조된 페이지를 replace
+      
+      - 구현방법 : 메모리에 올라온 페이지들을 참조 순서에 따라 줄세우기. 어떤 페이지가 다시 참조되면 그 노드를 가장 끝으로 보낸다  => Doubly Linked List 사용 O(1)
+    
+    - LFU (Least Frequently Used) : 가장 적게 참조된 페이지를 replace 
+      
+      - 구현방법 : LinkedList로 가장 적게 참조된 노드부터 가장 많이 참조된 노드를 연결. 중간에 있는 노드가 다시 참조된다면 그 노드부터 더 많이 참조된 노드를 선형으로 탐색해야 함 => O(n) /  따라서, LFU 알고리즘 heap으로 구현한다. head으로 구현할 경우 페이지가 다시 참조되어 참조횟수가 증가하면 선형으로  n만큼 탐색하지 않고 이진트리에서 최대 높이 logn만큼 탐색 => O(lonN)
 
 
