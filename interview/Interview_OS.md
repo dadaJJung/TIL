@@ -2,7 +2,31 @@
 
 ---
 
-### <br>
+<br>
+
+### <mark>Cpu Scheduling</mark>
+
+---
+
+- 
+
+<br>
+
+### <mark>Process Synchronization (프로세스 동기화)</mark>
+
+---
+
+- 
+
+<br>
+
+### <mark>Deadlocks</mark>
+
+---
+
+- 
+
+<br>
 
 ### 메모리 관리 관련 용어들
 
@@ -126,11 +150,11 @@
 
 <br>
 
-- <u>물리적인 메모리 주소변환은 운영체제가 관여하지 않는다</u> 
+- <u>물리적인 메모리 주소변환은 운영체제가 관여하지 않는다</u> / 운영체제가 메모리관리에서 하는 일 ? => 메인메모리에 올라와있지 않은 페이지가 요청될때 disk I/O, 메인메모리가 가득차있을 때 어떤 페이지를 swap area로 보낼지 결정 (page replacement)
 
 <br>
 
-### Virtual Memory (가상메모리)
+### <mark>Virtual Memory (가상메모리)</mark>
 
 ---
 
@@ -190,7 +214,7 @@
 
 <br>
 
-- **Thrashing**
+- **<mark>Thrashing</mark>**
   
   - 프로세스의 수행에 필요한 최소한의 프레임을 할당해주지 않아서 page fault가 빈번하게 발생하는 경우. cpu utilization이 낮아진다. 
   
@@ -210,11 +234,11 @@
 
 <br>
 
-### File System
+### <mark>File System</mark>
 
 ---
 
--  File
+- File
   
   - A named collection of related information
   
@@ -222,11 +246,11 @@
   
   - 관련 연산 : create, delete, read, write, open, close, reposition (lseek)
 
-- File System
+- <mark>File System</mark>
   
-  - 운영체제에서 파일을 관리하는 부분 
+  - <mark>운영체제에서 파일을 관리하는 부분 </mark>
   
-  - 파일과 메타데이터, 디렉토리 정보 등을 관리
+  - <mark>파일과 메타데이터, 디렉토리 정보 등을 관리</mark>
 
 - Directory
   
@@ -244,10 +268,150 @@
 
 - File System의 **Mounting**
   
-  - 
+  - 특정 디렉토리와 특정 파일 시스템을 연결
 
-- Sequential Access(순차접근) / Direct Access(직접접근)
+<br>
+
+- 파일 할당 방법 (Allocation of File Data in Disk)
+  
+  - **Contiguous Allocation (연속할당)** 
+    
+    - 파일의 데이터를 디스크에 연속적으로 할당
+    
+    - 장: 데이터가 인접한 블록에 존재. 한번의 seek/rotation으로 많은 양의 데이터를 transfer =>  I/O속도가 빠름
+    
+    - 장: 직접접근이 가능하다 (Direct Access = Random Access)
+    
+    - 단: 외부 조각(external fragment) 문제 
+    
+    - 단: 파일 크기가 변경될때 제약이 있음
+  
+  - **Linked Allocation**
+    
+    - 파일의 데이터를 디스크에 불연속적으로 할당. 여러 블록(섹터)에 흩어져 있음. 각 블록마다 다음 블록의 위치를 가지고 있다. 
+    
+    - 장: 외부조각 문제가 발생하지 않음
+    
+    - 단: 직접접근 불가능 (파일의 첫번째 블록부터 찾고자 하는 블록을 순차적으로 탐색해야 한다). 
+    
+    - 단: 하나의 sector가 고장나서 pointer가 유실되면 많은 데이터를 잃게된다.
+    
+    - 단: 모든 sector가 다음 sector의 포인터를 가지고 있어야 해서 공간의 낭비가 생긴다. 
+  
+  - **Indexed Allocation**
+    
+    - 인덱스 블록을 만들어서, 각각의 블록이 어느 위치에 위치해있는지 인덱스 블록 안에 기록.
+    
+    - 장: 직접접근이 가능하다 (Direct Access = Random Access)
+    
+    - 단: 작은 파일이라도 두개의 블록이 필요 (인덱스 블록, 데이터 블록) => 공간낭비
+    
+    - 단: 큰 파일일 경우 => 여러개의 인덱스 블록이 필요 
+      
+      - linked scheme : 인덱스블록의 맨 마지막 엔트리는 다음 인덱스 블록의 위치를 가리키도록 함
+      
+      - multi-level index : 하나의 인덱스 블록의 엔트리들이 다른 인덱스 블록의 인덱스 위치를 기록
+  
+  <br>
+
+- Unix File System
+  
+  - Boot Block / Super Block / INode / Data
+  
+  - Directory  
+    
+    - Directory Entry 
+      
+      - 디렉토리를 표현하는 자료구조로, 디렉토리 내부의 파일 갯수만큼 엔트리가 존재한다.
+      
+      - 각각의 엔트리는 FileName + Inode를 가리키는 포인터로 이루어짐 
+      
+      - *Inode란? => 파일이름을 제외한 파일의 메타데이터   
+
+<br>
+
+- page cache / buffer cache
+  
+  - page chache
+    
+    - 가상메모리 기법에서 필요한 페이지만 메인메모리 프레임에 올려놓는 것을 cache라고 부름
+  
+  - buffer cache
+    
+    - 프로그램이 실행되다가 데이터파일 읽는 read() 시스템콜 할때, 운영체제가 파일을 디스크에서 읽어서 buffer cache에 보관했다가 사용자에게 카피해서 넘겨준다. 다음에 동일 파일 데이터에 대한 요청이 오면 buffer cache에 있는 내용을 넘겨준다.
+
+<br>
+
+- Memory Mapped I/O
 
 - 
 
 
+
+
+
+<br>
+
+### <mark>Disk Management & Scheduling</mark>
+
+---
+
+-  Booting 
+  
+  - 메모리 영역중에 비휘발성 영역인 ROM에 small bootstrap loader가 있음 => 전원을 켜면 CPU가 ROM의 주소를 가리키고 이 부트스트랩 로더가 실행됨 => 하드디스크에서 0번 섹터에 있는 내용을 메모리에 올리고 실행하게 함 => 하드디스크의 0번 섹터에는 Boot Block이 있음 => Boot Block을 메모리에 올리고 실행하면 => 운영체제를 커널을 메모리에 올려서 실행하게 함.  => Booting
+
+- 디스크 접근 시간
+  
+  - <mark>Seek Time</mark> : 디스크 헤드가 해당 실린더로 움직이는데 걸리는 시간 (가장 시간이 많이 걸리는 부분)
+  
+  - <mark>Rotational Latency</mark> : 헤드가 원하는 섹터에 도달하기까지 걸리는 회전 지연 시간
+  
+  - <mark>Trasfer Time</mark> : 실제 데이터의 전송 시간
+
+- <mark>Disk Scheduling : Seek Time을 최소화 하는 것이 목표 </mark>
+
+<br>
+
+- <mark>Disk Scheduling</mark>
+  
+  - FCFS
+  
+  - SSTF (shortest seek time first) 
+    
+    - 현재 헤드 위치에서 가장 가까운 위치의 요청부터 처리
+    
+    - 기아(starvation) 문제 
+  
+  - SCAN
+    
+    - 엘리베이터 스케쥴링
+    
+    - 디스크 한쪽 끝에서 다른 한쪽 끝으로 이동하며 가는 길목에 있는 요청을 처리. 한쪽 끝에 도달하면 다시 역방향으로.
+  
+  - C-SCAN (Circular Scan)
+    
+    - 헤드가 한쪽 끝에서 다른 끝으로 이동하면 길목에 있는 요청을 처리. 한쪽 끝에 도달했으면 다시 출발점으로 이동 (이때는 요청을 처리하지 않음)
+    
+    - scan보다 균일한 대기 시간을 제공
+  
+  - N-SCAN
+    
+    - arm이 한 방향으로 움직이기 시작하면 그 시점 이후에 도착한 job은 되돌아올때 서비스 
+  
+  - LOOK
+    
+    - scan이나 c-scan은 헤드가 디스크 끝에서 끝으로 이동
+    
+    - Look은 헤드가 진행중이다가 그 방향에 더이상 기다리는 요청이 없으면 이동방향을 바꾼다
+  
+  - C-LOOK
+
+<br>
+
+- RAID (Redundant Array of Independent Disk) 
+  
+  - 여러개의 독립 디스크에 일부 중복된 데이터를 나눠서 저장
+    
+    - 디스크 처리 속도 향상 : 병렬적으로 데이터를 읽어옴
+    
+    - 신뢰성 향상 : 동일 정보를 여러 디스크에 중복 저장, 하나의 디스크 고장시 다른 디스크에서 읽어옴 

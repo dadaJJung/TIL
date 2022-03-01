@@ -36,7 +36,7 @@
   
   - **<mark>application</mark>** : supporting network applications
     
-    - FTP, SMTP, HTTP
+    - FTP, SMTP, HTTP, DNS
     
     - message
   
@@ -69,3 +69,5 @@
 - 각 계층은 아래 계층의 서비스를 이용해서 자신의 목표를 수행한다.
 
 <br>
+
+-  
